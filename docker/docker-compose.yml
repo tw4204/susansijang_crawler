@@ -1,0 +1,17 @@
+version: "3.3"
+services:
+  crawler:
+    image: susansijang_crawler:1.0
+    container_name: susansijang_crawler_crawler
+    links:
+      - mongo
+    volumes:
+      - $PWD/source:/source
+    working_dir: /source
+    command: python3 crawler.py
+  mongo:
+    image: mongo:4.4
+    container_name: susansijang_crawler_db
+    restart: always
+    volumes:
+      - $PWD/volumes/db_data:/data/db
