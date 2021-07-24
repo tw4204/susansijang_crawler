@@ -1,22 +1,42 @@
-from bs4 import BeautifulSoup
-import requests
-from url import susansijang_url 
+from const import fish_list
 from parser import (
     parse_rows_from_html,
     parse_max_page_from_html
 )
-import time
+from request import get_soup_from_page
+from database import db
+from config import (
+    start_date,
+    end_date
+)
+import datetime
+from logger import get_logger
+import os
 
+base_path = os.path.dirname(os.path.abspath(__file__))
+log_path = os.path.join(base_path, 'logs/crawler_log.txt')
+LOG = get_logger(__name__, log_path)
 
-r = requests.post(susansijang_url, data={
-    'pageIndex': 2,
-    'pageUnit': 10,
-    'pageSize': 20,
-    'kdfshNm': '가자미',
-    'kdfshCode': '가자미',
-    'searchStartDe': '2021.07.12',
-    'searchEndDe': '2021.07.19'
-})
+    
+    
+def crawl():
+    for fish_name in fish_list:
+        date = start_date
+        while date <= end_date:
+            date_string = date.strftime('%Y.%m.%d')
+            page = 1
+            soup = get_soup_from_page(page, fish_name, date_string)
+            max_page = parse_max_page_from_html(soup)
+            while True:
+                rows = parse_rows_from_html(soup, date)
+                if len(rows) > 0:
+                    db[fish_name].insert_many(rows)
+                LOG.info(f'name: {fish_name}, date: {date_string}, page: {page} / {max_page}, #rows: {len(rows)}')
+                if page >= max_page:
+                    break
+                soup = get_soup_from_page(page + 1, fish_name, date_string)
+                page += 1
+            date += datetime.timedelta(days=1) 
 
-soup = BeautifulSoup(r.text, 'html.parser')
-print(parse_rows_from_html(soup))
+if __name__ == '__main__':
+    crawl()
