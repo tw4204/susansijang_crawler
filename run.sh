@@ -1,4 +1,3 @@
-docker run --rm -it\
-  -w /source \
-  -v $PWD/source:/source \
-  susansijang_crawler:1.0 python3 crawler.py
+docker-compose -f docker/docker-compose.yml down
+docker-compose -f docker/docker-compose.yml up -d
+docker logs -f susansijang_crawler_crawler
