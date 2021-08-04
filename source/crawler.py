@@ -17,8 +17,7 @@ base_path = os.path.dirname(os.path.abspath(__file__))
 log_path = os.path.join(base_path, 'logs/crawler_log.txt')
 LOG = get_logger(__name__, log_path)
 
-    
-    
+
 def crawl():
     for fish_name in fish_list:
         date = start_date
@@ -31,12 +30,18 @@ def crawl():
                 rows = parse_rows_from_html(soup, date)
                 if len(rows) > 0:
                     db[fish_name].insert_many(rows)
-                LOG.info(f'name: {fish_name}, date: {date_string}, page: {page} / {max_page}, #rows: {len(rows)}')
+                LOG.info(
+                    f'name: {fish_name},'
+                    f'date: {date_string},'
+                    f'page: {page} / {max_page},'
+                    f'#rows: {len(rows)}'
+                )
                 if page >= max_page:
                     break
                 soup = get_soup_from_page(page + 1, fish_name, date_string)
                 page += 1
-            date += datetime.timedelta(days=1) 
+            date += datetime.timedelta(days=1)
+
 
 if __name__ == '__main__':
     crawl()

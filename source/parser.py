@@ -1,5 +1,7 @@
 from const import column_list
 from datetime import datetime
+
+
 def parse_rows_from_html(soup, date):
     rows = []
     tbody = soup.find_all('table', {"class": "print_table"})[0].tbody
@@ -17,6 +19,7 @@ def parse_rows_from_html(soup, date):
         )
         rows.append(row)
     return rows
+
 
 def parse_max_page_from_html(soup):
     pagination = soup.find_all("div", {"class": "paginate"})[0].find_all()

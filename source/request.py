@@ -2,6 +2,7 @@ from bs4 import BeautifulSoup
 import requests
 from const import target_url
 
+
 def get_soup_from_page(page, fish_name, date_string):
     r = requests.post(target_url, data={
         'pageIndex': page,

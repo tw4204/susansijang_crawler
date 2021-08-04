@@ -1,6 +1,7 @@
 import logging
 from logging.handlers import RotatingFileHandler
 
+
 def get_logger(logger_name, filepath):
     logger = logging.getLogger(logger_name)
     formatter = logging.Formatter(
